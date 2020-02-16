@@ -3,45 +3,75 @@
     <div>
 
       <!-- 新規登録フォーム -->
-      <section>
+      <section v-if="!isLogin">
         <h5>新規登録</h5>
-        <p><input type="text" placeholder="メールアドレス"></p>
-        <p><input type="password" placeholder="パスワード"></p>
+        <p><input type="text" v-model="mailAddress" placeholder="メールアドレス"></p>
+        <p><input type="password" v-model="password" placeholder="パスワード"></p>
         <div class="links">
-          <button>新規登録</button>
+          <button @click="regist()">新規登録</button>
         </div>
       </section>
 
       <!-- ログインフォーム -->
-      <section>
+      <section v-if="!isLogin">
         <h5>ログイン</h5>
-        <p><input type="text" placeholder="メールアドレス"></p>
-        <p><input type="password" placeholder="パスワード"></p>
+        <p><input type="text" v-model="mailAddress" placeholder="メールアドレス"></p>
+        <p><input type="password" v-model="password" placeholder="パスワード"></p>
         <div class="links">
-          <button>ログイン</button>
+          <button @click="login()">ログイン</button>
         </div>
       </section>
 
       <!-- マイページ -->
-      <section>
+      <section v-if="isLogin">
         <h5>ログイン中です</h5>
         <!-- ログイン中ユーザーのメールアドレスを表示 -->
-        <p>メールアドレス：</p>
+        <p>メールアドレス：{{$store.state.user.emailAddress}}</p>
         <div class="links">
-          <button>ログアウト</button>
-        </div>
-        <div>
-          <ul><li>メッセージ</li></ul>
-        </div>
-        <div class="links">
-          <p><input type="text" placeholder="メッセージ"></p>
-          <button>メッセージ追加</button>
+          <button @click="logout()">ログアウト</button>
         </div>
       </section>
 
     </div>
   </section>
 </template>
+
+<script>
+export default {
+  data: function(){
+    return {
+        mailAddress: '',
+        password: '',
+        content: '',
+    }
+  },
+  computed: {
+    isLogin(){
+        return this.$store.state.user.isLogin;
+    }
+  },
+  methods: {
+    init: function() {
+        this.password = "";
+        this.mailAddress = "";
+        this.content = "";
+    },
+    regist: function () {
+        console.log("regist")
+        this.$store.dispatch('user/regist', {mailAddress:this.mailAddress, password:this.password});
+        this.init();
+    },
+    login: function () {
+        this.$store.dispatch('user/login', {mailAddress:this.mailAddress, password:this.password});
+        this.init();
+        this.getMessages()
+    },
+    logout : function() {
+        this.$store.dispatch('user/logout');
+    }
+  },
+}
+</script>
 
 <style>
 .container {
