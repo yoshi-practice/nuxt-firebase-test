@@ -30,6 +30,15 @@
         <div class="links">
           <button @click="logout()">ログアウト</button>
         </div>
+        <div>
+          <ul v-for="(item,index) in $store.state.message.items" :key="index">
+　　　　　　　<li>{{ item.content }}</li>
+          </ul>
+        </div>
+        <div class="links">
+          <p><input type="text" v-model="content" placeholder="メッセージ"></p>
+          <button @click="addMessage()">メッセージ追加</button>
+        </div>
       </section>
 
     </div>
@@ -65,6 +74,13 @@ export default {
         this.$store.dispatch('user/login', {mailAddress:this.mailAddress, password:this.password});
         this.init();
         this.getMessages()
+    },
+    getMessages: function() {
+      this.$store.dispatch('message/load');
+    },
+    addMessage: function() {
+      this.$store.dispatch('message/add', { messageContent: this.content });
+      this.init();
     },
     logout : function() {
         this.$store.dispatch('user/logout');
